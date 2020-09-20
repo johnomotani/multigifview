@@ -21,6 +21,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
 
         self.movie = QMovie("test.gif")
         self.gif_widget.setMovie(self.movie)
+        self.movie.setCacheMode(QMovie.CacheAll)
 
         self.movie.jumpToFrame(0)
 
@@ -34,3 +35,17 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             self.movie.setPaused(False)
         else:
             self.movie.start()
+
+    def previous_action(self):
+        """Back one frame
+
+        """
+        self.movie.jumpToFrame(
+            (self.movie.currentFrameNumber() - 1) % self.movie.frameCount()
+        )
+
+    def next_action(self):
+        """Forward one frame
+
+        """
+        self.movie.jumpToNextFrame()
