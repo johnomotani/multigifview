@@ -23,23 +23,32 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
 
         filepath = Path(args[1])
         self.movie = QMovie(str(filepath))
-        self.movie.jumpToFrame(0)
         self.movie.setCacheMode(QMovie.CacheAll)
         self.gif_widget.setMovie(self.movie)
+        self.movie.jumpToFrame(0)
 
         self.extra_movies = []
         self.extra_gif_widgets = []
         for i, arg in enumerate(args[2:]):
             gif_widget = QLabel(self.centralwidget)
             gif_widget.setText("")
-            gif_widget.setObjectName(f"gif_widget{i}")
+            gif_widget.setObjectName(f"gif_widget{i + 1}")
+
             filepath = Path(arg)
             movie = QMovie(str(filepath))
-            movie.jumpToFrame(0)
             movie.setCacheMode(QMovie.CacheAll)
             gif_widget.setMovie(movie)
-            position = self.right_column.count() - 1
-            self.right_column.insertWidget(position, gif_widget)
+            movie.jumpToFrame(0)
+
+            if i%2 == 0:
+                # add to right column (arg[1] was in left column)
+                position = self.right_column.count() - 1
+                self.right_column.insertWidget(position, gif_widget)
+            else:
+                # add to left column
+                position = self.left_column.count() - 1
+                self.left_column.insertWidget(position, gif_widget)
+
             self.extra_movies.append(movie)
             self.extra_gif_widgets.append(gif_widget)
 
