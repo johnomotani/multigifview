@@ -52,6 +52,17 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             self.extra_movies.append(movie)
             self.extra_gif_widgets.append(gif_widget)
 
+        # want the longest-running gif to be the one that's directly controlled, so that
+        # it can play all the way to the end, not have to stop when self.movie reaches
+        # its last frame
+        for i, movie in enumerate(self.extra_movies):
+            if movie.frameCount() > self.movie.frameCount():
+                self.extra_movies[i] = self.movie
+                self.movie = movie
+
+        # Create actions so extra movies follow self.movie
+        self.movie.frameChanged.connect(self.change_frames)
+
     def play_action(self):
         """Play the gif
 
@@ -76,3 +87,10 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
 
         """
         self.movie.jumpToNextFrame()
+
+    def change_frames(self, new_frame):
+        """Change all the frames in step
+
+        """
+        for movie in self.extra_movies:
+            movie.jumpToFrame(new_frame)
