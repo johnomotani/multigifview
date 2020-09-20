@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from mainwindow import Ui_MainWindow
 from Qt.QtWidgets import QMainWindow
 from Qt.QtGui import QMovie
@@ -10,6 +12,8 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         super().__init__(None)
         self.setupUi(self)
 
+        filepath = Path(args[1])
+
         def set_clicked(widget, function):
             widget.clicked.connect(function)
             if hasattr(function, "__doc__"):
@@ -19,7 +23,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         set_clicked(self.previous_button, self.previous_action)
         set_clicked(self.next_button, self.next_action)
 
-        self.movie = QMovie("test.gif")
+        self.movie = QMovie(str(filepath))
         self.gif_widget.setMovie(self.movie)
         self.movie.setCacheMode(QMovie.CacheAll)
 
