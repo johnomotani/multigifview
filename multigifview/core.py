@@ -1,8 +1,8 @@
 from pathlib import Path
 
 from mainwindow import Ui_MainWindow
-from Qt.QtWidgets import QMainWindow, QLabel
-from Qt.QtGui import QMovie
+from Qt.QtWidgets import QApplication, QMainWindow, QLabel, QShortcut
+from Qt.QtGui import QMovie, QKeySequence
 
 
 class MultiGifView(QMainWindow, Ui_MainWindow):
@@ -11,6 +11,18 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
     def __init__(self, args):
         super().__init__(None)
         self.setupUi(self)
+
+        # extra keyboard shortcuts
+        quit_shortcut = QShortcut(QKeySequence("Q"), self)
+        quit_shortcut.activated.connect(QApplication.instance().quit)
+        quit_shortcut = QShortcut(QKeySequence("Ctrl+Q"), self)
+        quit_shortcut.activated.connect(QApplication.instance().quit)
+        quit_shortcut = QShortcut(QKeySequence("Ctrl+X"), self)
+        quit_shortcut.activated.connect(QApplication.instance().quit)
+        next_shortcut = QShortcut(QKeySequence("left"), self)
+        next_shortcut.activated.connect(self.previous_action)
+        next_shortcut = QShortcut(QKeySequence("right"), self)
+        next_shortcut.activated.connect(self.next_action)
 
         def set_clicked(widget, function):
             widget.clicked.connect(function)
@@ -40,7 +52,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             gif_widget.setMovie(movie)
             movie.jumpToFrame(0)
 
-            if i%2 == 0:
+            if i % 2 == 0:
                 # add to right column (arg[1] was in left column)
                 position = self.right_column.count() - 1
                 self.right_column.insertWidget(position, gif_widget)
@@ -64,9 +76,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         self.movie.frameChanged.connect(self.change_frames)
 
     def play_action(self):
-        """Play the gif
-
-        """
+        """Play the gif"""
         if self.movie.state() == QMovie.Running:
             self.movie.setPaused(True)
         elif self.movie.state() == QMovie.Paused:
@@ -75,22 +85,16 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             self.movie.start()
 
     def previous_action(self):
-        """Back one frame
-
-        """
+        """Back one frame"""
         self.movie.jumpToFrame(
             (self.movie.currentFrameNumber() - 1) % self.movie.frameCount()
         )
 
     def next_action(self):
-        """Forward one frame
-
-        """
+        """Forward one frame"""
         self.movie.jumpToNextFrame()
 
     def change_frames(self, new_frame):
-        """Change all the frames in step
-
-        """
+        """Change all the frames in step"""
         for movie in self.extra_movies:
             movie.jumpToFrame(new_frame)

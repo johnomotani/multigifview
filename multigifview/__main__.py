@@ -7,9 +7,7 @@ from core import MultiGifView
 
 
 def main():
-    """Simple gif viewer
-
-    """
+    """Simple gif viewer"""
     app = QApplication(sys.argv)
     window = MultiGifView(sys.argv)
     window.show()
