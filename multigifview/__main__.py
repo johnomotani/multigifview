@@ -15,7 +15,9 @@ def main():
     play - space
     previous frame - p or left-arrow
     next frame - n or right-arrow
-    quit - q, Ctrl-q or Ctrl-x
+    beginning - b or up arrow
+    end - e or down arrow
+    quit - q, Ctrl-q, Ctrl-w or Ctrl-x
     """
     # Use argparse to add help
     parser = argparse.ArgumentParser(description=main.__doc__)

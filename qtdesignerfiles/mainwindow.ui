@@ -66,6 +66,33 @@
        <enum>QLayout::SetFixedSize</enum>
       </property>
       <item>
+       <widget class="QPushButton" name="beginning_button">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="media-skip-backward"/>
+        </property>
+        <property name="shortcut">
+         <string>B</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="previous_button">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="media-seek-backward">
+          <normaloff>.</normaloff>.</iconset>
+        </property>
+        <property name="shortcut">
+         <string>P</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="play_button">
         <property name="text">
          <string/>
@@ -80,30 +107,29 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="previous_button">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset theme="media-skip-backward">
-          <normaloff>.</normaloff>.</iconset>
-        </property>
-        <property name="shortcut">
-         <string>P</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="next_button">
         <property name="text">
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="media-skip-forward">
+         <iconset theme="media-seek-forward">
           <normaloff>.</normaloff>.</iconset>
         </property>
         <property name="shortcut">
          <string>N</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="end_button">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="media-skip-forward"/>
+        </property>
+        <property name="shortcut">
+         <string>E</string>
         </property>
        </widget>
       </item>

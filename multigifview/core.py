@@ -21,10 +21,14 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         quit_shortcut.activated.connect(QApplication.instance().quit)
         quit_shortcut = QShortcut(QKeySequence("Ctrl+W"), self)
         quit_shortcut.activated.connect(QApplication.instance().quit)
-        next_shortcut = QShortcut(QKeySequence("left"), self)
-        next_shortcut.activated.connect(self.previous_action)
+        previous_shortcut = QShortcut(QKeySequence("left"), self)
+        previous_shortcut.activated.connect(self.previous_action)
         next_shortcut = QShortcut(QKeySequence("right"), self)
         next_shortcut.activated.connect(self.next_action)
+        beginning_shortcut = QShortcut(QKeySequence("up"), self)
+        beginning_shortcut.activated.connect(self.beginning_action)
+        end_shortcut = QShortcut(QKeySequence("down"), self)
+        end_shortcut.activated.connect(self.end_action)
 
         def set_clicked(widget, function):
             widget.clicked.connect(function)
@@ -34,6 +38,8 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         set_clicked(self.play_button, self.play_action)
         set_clicked(self.previous_button, self.previous_action)
         set_clicked(self.next_button, self.next_action)
+        set_clicked(self.beginning_button, self.beginning_action)
+        set_clicked(self.end_button, self.end_action)
 
         filepath = Path(filenames[0])
         self.movie = QMovie(str(filepath))
@@ -95,6 +101,14 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
     def next_action(self):
         """Forward one frame"""
         self.movie.jumpToNextFrame()
+
+    def beginning_action(self):
+        """Back to beginning"""
+        self.movie.jumpToFrame(0)
+
+    def end_action(self):
+        """Forward to end"""
+        self.movie.jumpToFrame(self.movie.frameCount() - 1)
 
     def change_frames(self, new_frame):
         """Change all the frames in step"""
