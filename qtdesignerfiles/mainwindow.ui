@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>788</width>
-    <height>669</height>
+    <height>675</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,7 +71,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="media-playback-start"/>
+         <iconset theme="media-playback-start">
+          <normaloff>.</normaloff>.</iconset>
         </property>
         <property name="shortcut">
          <string>Space</string>
@@ -84,7 +85,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="media-skip-backward"/>
+         <iconset theme="media-skip-backward">
+          <normaloff>.</normaloff>.</iconset>
         </property>
         <property name="shortcut">
          <string>P</string>
@@ -97,7 +99,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="media-skip-forward"/>
+         <iconset theme="media-skip-forward">
+          <normaloff>.</normaloff>.</iconset>
         </property>
         <property name="shortcut">
          <string>N</string>
@@ -131,7 +134,6 @@
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
