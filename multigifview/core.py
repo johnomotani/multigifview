@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from mainwindow import Ui_MainWindow
+from .mainwindow import Ui_MainWindow
 from Qt.QtWidgets import QApplication, QMainWindow, QLabel, QShortcut
 from Qt.QtGui import QMovie, QKeySequence
 
