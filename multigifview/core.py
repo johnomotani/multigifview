@@ -19,6 +19,8 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         quit_shortcut.activated.connect(QApplication.instance().quit)
         quit_shortcut = QShortcut(QKeySequence("Ctrl+X"), self)
         quit_shortcut.activated.connect(QApplication.instance().quit)
+        quit_shortcut = QShortcut(QKeySequence("Ctrl+W"), self)
+        quit_shortcut.activated.connect(QApplication.instance().quit)
         next_shortcut = QShortcut(QKeySequence("left"), self)
         next_shortcut.activated.connect(self.previous_action)
         next_shortcut = QShortcut(QKeySequence("right"), self)
