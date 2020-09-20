@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from mainwindow import Ui_MainWindow
-from Qt.QtWidgets import QMainWindow
+from Qt.QtWidgets import QMainWindow, QLabel
 from Qt.QtGui import QMovie
 
 
@@ -23,10 +23,25 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
 
         filepath = Path(args[1])
         self.movie = QMovie(str(filepath))
-        self.gif_widget.setMovie(self.movie)
-        self.movie.setCacheMode(QMovie.CacheAll)
-
         self.movie.jumpToFrame(0)
+        self.movie.setCacheMode(QMovie.CacheAll)
+        self.gif_widget.setMovie(self.movie)
+
+        self.extra_movies = []
+        self.extra_gif_widgets = []
+        for i, arg in enumerate(args[2:]):
+            gif_widget = QLabel(self.centralwidget)
+            gif_widget.setText("")
+            gif_widget.setObjectName(f"gif_widget{i}")
+            filepath = Path(arg)
+            movie = QMovie(str(filepath))
+            movie.jumpToFrame(0)
+            movie.setCacheMode(QMovie.CacheAll)
+            gif_widget.setMovie(movie)
+            position = self.right_column.count() - 1
+            self.right_column.insertWidget(position, gif_widget)
+            self.extra_movies.append(movie)
+            self.extra_gif_widgets.append(gif_widget)
 
     def play_action(self):
         """Play the gif
