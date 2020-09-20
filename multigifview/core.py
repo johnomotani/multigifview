@@ -8,7 +8,7 @@ from Qt.QtGui import QMovie, QKeySequence
 class MultiGifView(QMainWindow, Ui_MainWindow):
     """A program for viewing .gif files"""
 
-    def __init__(self, args):
+    def __init__(self, filenames):
         super().__init__(None)
         self.setupUi(self)
 
@@ -33,7 +33,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         set_clicked(self.previous_button, self.previous_action)
         set_clicked(self.next_button, self.next_action)
 
-        filepath = Path(args[1])
+        filepath = Path(filenames[0])
         self.movie = QMovie(str(filepath))
         self.movie.setCacheMode(QMovie.CacheAll)
         self.gif_widget.setMovie(self.movie)
@@ -41,7 +41,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
 
         self.extra_movies = []
         self.extra_gif_widgets = []
-        for i, arg in enumerate(args[2:]):
+        for i, arg in enumerate(filenames[1:]):
             gif_widget = QLabel(self.centralwidget)
             gif_widget.setText("")
             gif_widget.setObjectName(f"gif_widget{i + 1}")
@@ -53,7 +53,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             movie.jumpToFrame(0)
 
             if i % 2 == 0:
-                # add to right column (arg[1] was in left column)
+                # add to right column (filenames[0] was in left column)
                 position = self.right_column.count() - 1
                 self.right_column.insertWidget(position, gif_widget)
             else:
