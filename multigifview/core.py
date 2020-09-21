@@ -168,7 +168,11 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
     def change_frames(self, new_frame):
         """Change all the frames in step"""
         for movie in self.extra_movies:
-            movie.jumpToFrame(new_frame)
+            length = movie.frameCount()
+            if new_frame < length:
+                movie.jumpToFrame(new_frame)
+            else:
+                movie.jumpToFrame(length - 1)
 
     def reset_minimum_size(self):
         """Allow window to be shrunk from default size"""
