@@ -1,14 +1,23 @@
 from pathlib import Path
 
 from .mainwindow import Ui_MainWindow
-from Qt.QtWidgets import QApplication, QMainWindow, QLabel, QShortcut
+from Qt.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QLabel,
+    QShortcut,
+    QSizePolicy,
+    QSpacerItem,
+    QStyle,
+    QVBoxLayout,
+)
 from Qt.QtGui import QMovie, QKeySequence
 
 
 class MultiGifView(QMainWindow, Ui_MainWindow):
     """A program for viewing .gif files"""
 
-    def __init__(self, filenames):
+    def __init__(self, filenames, *, max_columns):
         super().__init__(None)
         self.setupUi(self)
 
@@ -41,15 +50,22 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         set_clicked(self.beginning_button, self.beginning_action)
         set_clicked(self.end_button, self.end_action)
 
-        filepath = Path(filenames[0])
-        self.movie = QMovie(str(filepath))
-        self.movie.setCacheMode(QMovie.CacheAll)
-        self.gif_widget.setMovie(self.movie)
-        self.movie.jumpToFrame(0)
+        if max_columns < 1:
+            raise ValueError(f"Number of columns must be positive, got {max_columns}")
+        n_columns = min(max_columns, len(filenames))
+        self.columns = [self.column0]
+        for i in range(n_columns)[1:]:
+            # Create column
+            column = QVBoxLayout()
+            column.setObjectName(f"column{i}")
+            spacerItem = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+            column.addItem(spacerItem)
+            self.gif_layout.addLayout(column)
+            self.columns.append(column)
 
         self.extra_movies = []
         self.extra_gif_widgets = []
-        for i, arg in enumerate(filenames[1:]):
+        for i, arg in enumerate(filenames):
             gif_widget = QLabel(self.centralwidget)
             gif_widget.setText("")
             gif_widget.setObjectName(f"gif_widget{i + 1}")
@@ -60,25 +76,64 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             gif_widget.setMovie(movie)
             movie.jumpToFrame(0)
 
-            if i % 2 == 0:
-                # add to right column (filenames[0] was in left column)
-                position = self.right_column.count() - 1
-                self.right_column.insertWidget(position, gif_widget)
-            else:
-                # add to left column
-                position = self.left_column.count() - 1
-                self.left_column.insertWidget(position, gif_widget)
+            column = self.columns[i % n_columns]
+            position = column.count() - 1
+            column.insertWidget(position, gif_widget)
 
             self.extra_movies.append(movie)
             self.extra_gif_widgets.append(gif_widget)
 
+        # Set a sensible initial width
+        scrollable_width = (
+            sum([c.sizeHint().width() for c in self.columns])
+            + self.columns[0].spacing()
+            + sum([2 * c.spacing() for c in self.columns[1:-1]])
+            + self.columns[-1].spacing()
+            + self.scrollArea.verticalScrollBar().sizeHint().width()
+        )
+        (
+            left_margin,
+            top_margin,
+            right_margin,
+            bottom_margin,
+        ) = self.verticalLayout_main.getContentsMargins()
+        max_width = (
+            QApplication.desktop().availableGeometry().width()
+            - left_margin
+            - right_margin
+        )
+        self.scrollArea.setMinimumWidth(min(scrollable_width, max_width))
+
+        # Set a sensible initial height
+        column_heights = [c.sizeHint().height() for c in self.columns]
+        highest_col_index = column_heights.index(max(column_heights))
+        scrollable_height = (
+            column_heights[highest_col_index]
+            + self.columns[highest_col_index].spacing()
+            + self.scrollArea.horizontalScrollBar().sizeHint().height()
+        )
+        control_bar_height = (
+            self.horizontalLayout.sizeHint().height()
+            + 2 * self.horizontalLayout.spacing()
+        )
+        menu_bar_height = self.menubar.sizeHint().height()
+        title_bar_height = QApplication.style().pixelMetric(QStyle.PM_TitleBarHeight)
+        max_height = (
+            QApplication.desktop().availableGeometry().height()
+            - top_margin
+            - bottom_margin
+            - control_bar_height
+            - menu_bar_height
+            - title_bar_height
+        )
+        self.scrollArea.setMinimumHeight(min(scrollable_height, max_height))
+
         # want the longest-running gif to be the one that's directly controlled, so that
-        # it can play all the way to the end, not have to stop when self.movie reaches
-        # its last frame
-        for i, movie in enumerate(self.extra_movies):
-            if movie.frameCount() > self.movie.frameCount():
-                self.extra_movies[i] = self.movie
-                self.movie = movie
+        # it can play all the way to the end, not have to stop when the first movie
+        # reaches its last frame
+        frame_counts = [m.frameCount() for m in self.extra_movies]
+        ind_longest = frame_counts.index(max(frame_counts))
+        self.movie = self.extra_movies.pop(ind_longest)
 
         # Create actions so extra movies follow self.movie
         self.movie.frameChanged.connect(self.change_frames)
@@ -113,4 +168,13 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
     def change_frames(self, new_frame):
         """Change all the frames in step"""
         for movie in self.extra_movies:
-            movie.jumpToFrame(new_frame)
+            length = movie.frameCount()
+            if new_frame < length:
+                movie.jumpToFrame(new_frame)
+            else:
+                movie.jumpToFrame(length - 1)
+
+    def reset_minimum_size(self):
+        """Allow window to be shrunk from default size"""
+        self.scrollArea.setMinimumWidth(0)
+        self.scrollArea.setMinimumHeight(0)
