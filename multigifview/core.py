@@ -1,7 +1,15 @@
 from pathlib import Path
 
 from .mainwindow import Ui_MainWindow
-from Qt.QtWidgets import QApplication, QMainWindow, QLabel, QShortcut
+from Qt.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QLabel,
+    QShortcut,
+    QSizePolicy,
+    QSpacerItem,
+    QVBoxLayout,
+)
 from Qt.QtGui import QMovie, QKeySequence
 
 
@@ -46,6 +54,16 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         self.movie.setCacheMode(QMovie.CacheAll)
         self.gif_widget.setMovie(self.movie)
         self.movie.jumpToFrame(0)
+
+        if len(filenames) > 1:
+            # Create second column
+            self.right_column = QVBoxLayout()
+            self.right_column.setObjectName("right_column")
+            spacerItem_right = QSpacerItem(
+                20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding
+            )
+            self.right_column.addItem(spacerItem_right)
+            self.gif_layout.addLayout(self.right_column)
 
         self.extra_movies = []
         self.extra_gif_widgets = []

@@ -41,23 +41,6 @@
         </item>
        </layout>
       </item>
-      <item>
-       <layout class="QVBoxLayout" name="right_column">
-        <item>
-         <spacer name="verticalSpacer_right">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
      </layout>
     </item>
     <item>
@@ -71,7 +54,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="media-skip-backward"/>
+         <iconset theme="media-skip-backward">
+          <normaloff>.</normaloff>.</iconset>
         </property>
         <property name="shortcut">
          <string>B</string>
@@ -126,7 +110,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="media-skip-forward"/>
+         <iconset theme="media-skip-forward">
+          <normaloff>.</normaloff>.</iconset>
         </property>
         <property name="shortcut">
          <string>E</string>
