@@ -22,6 +22,13 @@ def main():
     # Use argparse to add help
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument("file", nargs="+", help=".gif files to open")
+    parser.add_argument(
+        "-c",
+        "--max-columns",
+        help="maximum number of columns to use (default 2)",
+        type=int,
+        default=2,
+    )
     from multigifview import __version__
 
     parser.add_argument(
@@ -30,7 +37,7 @@ def main():
     args = parser.parse_args()
 
     app = QApplication(sys.argv)
-    window = MultiGifView(args.file)
+    window = MultiGifView(args.file, max_columns=args.max_columns)
     window.show()
     sys.exit(app.exec_())
 

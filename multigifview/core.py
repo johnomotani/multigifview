@@ -16,7 +16,7 @@ from Qt.QtGui import QMovie, QKeySequence
 class MultiGifView(QMainWindow, Ui_MainWindow):
     """A program for viewing .gif files"""
 
-    def __init__(self, filenames):
+    def __init__(self, filenames, *, max_columns):
         super().__init__(None)
         self.setupUi(self)
 
@@ -49,25 +49,24 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         set_clicked(self.beginning_button, self.beginning_action)
         set_clicked(self.end_button, self.end_action)
 
-        filepath = Path(filenames[0])
-        self.movie = QMovie(str(filepath))
-        self.movie.setCacheMode(QMovie.CacheAll)
-        self.gif_widget.setMovie(self.movie)
-        self.movie.jumpToFrame(0)
-
-        if len(filenames) > 1:
-            # Create second column
-            self.right_column = QVBoxLayout()
-            self.right_column.setObjectName("right_column")
-            spacerItem_right = QSpacerItem(
+        if max_columns < 1:
+            raise ValueError(f"Number of columns must be positive, got {max_columns}")
+        n_columns = min(max_columns, len(filenames))
+        self.columns = [self.column0]
+        for i in range(n_columns)[1:]:
+            # Create column
+            column = QVBoxLayout()
+            column.setObjectName(f"column{i}")
+            spacerItem = QSpacerItem(
                 0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding
             )
-            self.right_column.addItem(spacerItem_right)
-            self.gif_layout.addLayout(self.right_column)
+            column.addItem(spacerItem)
+            self.gif_layout.addLayout(column)
+            self.columns.append(column)
 
         self.extra_movies = []
         self.extra_gif_widgets = []
-        for i, arg in enumerate(filenames[1:]):
+        for i, arg in enumerate(filenames):
             gif_widget = QLabel(self.centralwidget)
             gif_widget.setText("")
             gif_widget.setObjectName(f"gif_widget{i + 1}")
@@ -78,25 +77,19 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             gif_widget.setMovie(movie)
             movie.jumpToFrame(0)
 
-            if i % 2 == 0:
-                # add to right column (filenames[0] was in left column)
-                position = self.right_column.count() - 1
-                self.right_column.insertWidget(position, gif_widget)
-            else:
-                # add to left column
-                position = self.left_column.count() - 1
-                self.left_column.insertWidget(position, gif_widget)
+            column = self.columns[i % n_columns]
+            position = column.count() - 1
+            column.insertWidget(position, gif_widget)
 
             self.extra_movies.append(movie)
             self.extra_gif_widgets.append(gif_widget)
 
         # want the longest-running gif to be the one that's directly controlled, so that
-        # it can play all the way to the end, not have to stop when self.movie reaches
-        # its last frame
-        for i, movie in enumerate(self.extra_movies):
-            if movie.frameCount() > self.movie.frameCount():
-                self.extra_movies[i] = self.movie
-                self.movie = movie
+        # it can play all the way to the end, not have to stop when the first movie
+        # reaches its last frame
+        frame_counts = [m.frameCount() for m in self.extra_movies]
+        ind_longest = frame_counts.index(max(frame_counts))
+        self.movie = self.extra_movies.pop(ind_longest)
 
         # Create actions so extra movies follow self.movie
         self.movie.frameChanged.connect(self.change_frames)

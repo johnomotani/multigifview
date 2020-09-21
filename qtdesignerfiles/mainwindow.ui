@@ -30,14 +30,7 @@
     <item>
      <layout class="QHBoxLayout" name="gif_layout">
       <item>
-       <layout class="QVBoxLayout" name="left_column">
-        <item>
-         <widget class="QLabel" name="gif_widget">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
+       <layout class="QVBoxLayout" name="column0">
         <item>
          <spacer name="verticalSpacer_left">
           <property name="orientation">
