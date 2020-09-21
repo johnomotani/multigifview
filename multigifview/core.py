@@ -8,6 +8,7 @@ from Qt.QtWidgets import (
     QShortcut,
     QSizePolicy,
     QSpacerItem,
+    QStyle,
     QVBoxLayout,
 )
 from Qt.QtGui import QMovie, QKeySequence
@@ -57,9 +58,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             # Create column
             column = QVBoxLayout()
             column.setObjectName(f"column{i}")
-            spacerItem = QSpacerItem(
-                0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding
-            )
+            spacerItem = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
             column.addItem(spacerItem)
             self.gif_layout.addLayout(column)
             self.columns.append(column)
@@ -83,6 +82,51 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
 
             self.extra_movies.append(movie)
             self.extra_gif_widgets.append(gif_widget)
+
+        # Set a sensible initial width
+        scrollable_width = (
+            sum([c.sizeHint().width() for c in self.columns])
+            + self.columns[0].spacing()
+            + sum([2 * c.spacing() for c in self.columns[1:-1]])
+            + self.columns[-1].spacing()
+            + self.scrollArea.verticalScrollBar().sizeHint().width()
+        )
+        (
+            left_margin,
+            top_margin,
+            right_margin,
+            bottom_margin,
+        ) = self.verticalLayout_main.getContentsMargins()
+        max_width = (
+            QApplication.desktop().availableGeometry().width()
+            - left_margin
+            - right_margin
+        )
+        self.scrollArea.setMinimumWidth(min(scrollable_width, max_width))
+
+        # Set a sensible initial height
+        column_heights = [c.sizeHint().height() for c in self.columns]
+        highest_col_index = column_heights.index(max(column_heights))
+        scrollable_height = (
+            column_heights[highest_col_index]
+            + self.columns[highest_col_index].spacing()
+            + self.scrollArea.horizontalScrollBar().sizeHint().height()
+        )
+        control_bar_height = (
+            self.horizontalLayout.sizeHint().height()
+            + 2 * self.horizontalLayout.spacing()
+        )
+        menu_bar_height = self.menubar.sizeHint().height()
+        title_bar_height = QApplication.style().pixelMetric(QStyle.PM_TitleBarHeight)
+        max_height = (
+            QApplication.desktop().availableGeometry().height()
+            - top_margin
+            - bottom_margin
+            - control_bar_height
+            - menu_bar_height
+            - title_bar_height
+        )
+        self.scrollArea.setMinimumHeight(min(scrollable_height, max_height))
 
         # want the longest-running gif to be the one that's directly controlled, so that
         # it can play all the way to the end, not have to stop when the first movie
@@ -125,3 +169,8 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         """Change all the frames in step"""
         for movie in self.extra_movies:
             movie.jumpToFrame(new_frame)
+
+    def reset_minimum_size(self):
+        """Allow window to be shrunk from default size"""
+        self.scrollArea.setMinimumWidth(0)
+        self.scrollArea.setMinimumHeight(0)

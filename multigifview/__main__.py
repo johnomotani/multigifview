@@ -39,6 +39,7 @@ def main():
     app = QApplication(sys.argv)
     window = MultiGifView(args.file, max_columns=args.max_columns)
     window.show()
+    window.reset_minimum_size()
     sys.exit(app.exec_())
 
 
