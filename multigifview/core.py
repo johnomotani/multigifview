@@ -60,7 +60,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             self.right_column = QVBoxLayout()
             self.right_column.setObjectName("right_column")
             spacerItem_right = QSpacerItem(
-                20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding
+                0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding
             )
             self.right_column.addItem(spacerItem_right)
             self.gif_layout.addLayout(self.right_column)
