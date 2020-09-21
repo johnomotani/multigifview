@@ -19,6 +19,11 @@ def main():
     end - e or down arrow
     quit - q, Ctrl-q, Ctrl-w or Ctrl-x
     """
+    # Make sure application exits on Ctrl-C
+    import signal
+
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
     # Use argparse to add help
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument("file", nargs="+", help=".gif files to open")
