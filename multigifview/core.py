@@ -49,6 +49,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         set_clicked(self.next_button, self.next_action)
         set_clicked(self.beginning_button, self.beginning_action)
         set_clicked(self.end_button, self.end_action)
+        set_clicked(self.quit_button, self.quit_action)
 
         if max_columns < 1:
             raise ValueError(f"Number of columns must be positive, got {max_columns}")
@@ -174,6 +175,12 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         e, down</p></body></html>
         """
         self.movie.jumpToFrame(self.movie.frameCount() - 1)
+
+    def quit_action(self):
+        """<html><head/><body><p><b>Quit</b><br>
+        q, Ctrl-q, Ctrl-w, Ctrl-x</p></body></html>
+        """
+        QApplication.instance().quit
 
     def change_frames(self, new_frame):
         """Change all the frames in step"""
