@@ -49,3 +49,14 @@ MultiGifView can be used from within Python code.
 
 Any number of gifs can be passed as positional arguments. ``max_columns`` can
 be passed as a keyword argument.
+
+Acknowledgements
+----------------
+
+Contributors: [John Omotani](https://github.com/johnomotani)
+
+#### Thanks
+
+From John Omotani to [Peter Hill](https://github.com/ZedThree) for writing the
+gui for [hypnotoad](https://github.com/boutproject/hypnotoad) from which I
+learned to make a Qt gui in Python.
