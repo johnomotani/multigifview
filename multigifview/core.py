@@ -49,6 +49,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         set_clicked(self.next_button, self.next_action)
         set_clicked(self.beginning_button, self.beginning_action)
         set_clicked(self.end_button, self.end_action)
+        set_clicked(self.quit_button, self.quit_action)
 
         if max_columns < 1:
             raise ValueError(f"Number of columns must be positive, got {max_columns}")
@@ -139,7 +140,9 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         self.movie.frameChanged.connect(self.change_frames)
 
     def play_action(self):
-        """Play the gif"""
+        """<html><head/><body><p><b>Play</b><br>
+        space</p></body></html>
+        """
         if self.movie.state() == QMovie.Running:
             self.movie.setPaused(True)
         elif self.movie.state() == QMovie.Paused:
@@ -148,22 +151,36 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             self.movie.start()
 
     def previous_action(self):
-        """Back one frame"""
+        """<html><head/><body><p><b>Back one frame</b><br>
+        p, left</p></body></html>
+        """
         self.movie.jumpToFrame(
             (self.movie.currentFrameNumber() - 1) % self.movie.frameCount()
         )
 
     def next_action(self):
-        """Forward one frame"""
+        """<html><head/><body><p><b>Forward one frame</b><br>
+        n, right</p></body></html>
+        """
         self.movie.jumpToNextFrame()
 
     def beginning_action(self):
-        """Back to beginning"""
+        """<html><head/><body><p><b>Back to beginning</b><br>
+        b, up</p></body></html>
+        """
         self.movie.jumpToFrame(0)
 
     def end_action(self):
-        """Forward to end"""
+        """<html><head/><body><p><b>Forward to end</b><br>
+        e, down</p></body></html>
+        """
         self.movie.jumpToFrame(self.movie.frameCount() - 1)
+
+    def quit_action(self):
+        """<html><head/><body><p><b>Quit</b><br>
+        q, Ctrl-q, Ctrl-w, Ctrl-x</p></body></html>
+        """
+        QApplication.instance().quit
 
     def change_frames(self, new_frame):
         """Change all the frames in step"""
