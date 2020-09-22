@@ -33,3 +33,19 @@ Once the window is opened:
 * beginning - b, up arrow, or skip-backward button in bottom left
 
 * quit - q, Ctrl-q, Ctrl-w, Ctrl-x or close the window
+
+Command line argumens:
+
+``-c, --max-columns <i>`` : use at most ``<i>`` columns for display
+``-h, --help`` : print help text
+``-v, --version`` : print the version number
+
+### In Python code
+
+MultiGifView can be used from within Python code.
+
+    >>> from multigifview import show_gifs
+    >>> show_gifs("gif1.gif", "gif2.gif")
+
+Any number of gifs can be passed as positional arguments. ``max_columns`` can
+be passed as a keyword argument.
