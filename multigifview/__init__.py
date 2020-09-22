@@ -1,4 +1,4 @@
-from .__main__ import main
+from .__main__ import main, show_gifs
 
 try:
     from importlib.metadata import version, PackageNotFoundError

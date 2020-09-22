@@ -8,6 +8,28 @@ import sys
 from .core import MultiGifView
 
 
+def show_gifs(*args, max_columns=2):
+    """Show gifs in a Qt window
+
+    Any number of gifs can be opened. Each will be in a new column until there are
+    max_columns columns. After that new rows will be created and filled until all the
+    gifs are shown.
+
+    Parameters
+    ----------
+    *args - list of str or pathlib.Path
+        The .gif files to open
+    max_columns : int, default 2
+        Maximum number of columns to use
+    """
+    app = QApplication(sys.argv)
+    window = MultiGifView(filenames, max_columns=max_columns)
+    window.show()
+    window.reset_minimum_size()
+
+    return app.exec_()
+
+
 def main():
     """Simple gif viewer
 
@@ -41,11 +63,9 @@ def main():
     )
     args = parser.parse_args()
 
-    app = QApplication(sys.argv)
-    window = MultiGifView(args.file, max_columns=args.max_columns)
-    window.show()
-    window.reset_minimum_size()
-    sys.exit(app.exec_())
+    exit_code = show_gifs(*args.file, max_columns=args.max_columns)
+
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":
