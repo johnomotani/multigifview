@@ -8,7 +8,7 @@ import sys
 from .core import MultiGifView
 
 
-def show_gifs(*args, max_columns=2):
+def show_gifs(*filenames, max_columns=2):
     """Show gifs in a Qt window
 
     Any number of gifs can be opened. Each will be in a new column until there are
