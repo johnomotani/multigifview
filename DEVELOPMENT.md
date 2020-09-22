@@ -17,3 +17,31 @@ overwritten when a new version is generated.
 
 The rest of the functionality is provided by the ``MultiGifView`` class in
 ``multigifview/main.py``.
+
+Installing from git repo
+------------------------
+
+Suggested way to install from the git repo is to use
+
+    $ pip install --user -e .
+
+to make an editable install (the installed version will see changes in the repo).
+
+Installing in non-editable mode using
+
+    $ pip install --user .
+
+will fail because the man page does not exist - it is auto-generated in a
+Github action for releases. If you want to do this, either copy the stub to get
+a generic man page noting that multigifview is a development version
+
+    $ cp man/multigifview.1.dev-stub man/multigifview.1
+
+or create a new man page. For example this can be done as in the Github action
+
+    $ pip install --user -e .
+    $ help2man -N multigifview > man/multigifview.1
+
+The ``pip install --user -e .`` is needed first to create the multigifview
+executable because use of a relative import means it is not possible to run
+``multigifview/__main__.py`` directly.

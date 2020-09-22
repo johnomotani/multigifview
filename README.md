@@ -16,6 +16,15 @@ or with conda
 
     $ conda install -c conda-forge multigifview
 
+#### known issues
+
+Installing an unreleased version with pip from the git repo like this
+
+    $ python -m pip install --user https://github.com/johnomotani/multigifview.git
+
+is expected to fail because of a missing man page file. As an alternative,
+clone the repo and see ``DEVELOPMENT.md`` for how to install.
+
 ### Usage
 
     $ multigifview movie1.gif movie2.gif movie3.gif ...

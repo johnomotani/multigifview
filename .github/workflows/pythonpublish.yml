@@ -52,13 +52,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install --upgrade setuptools wheel twine
         sudo apt-get install help2man
+        pip install -e .
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         git fetch --tags --unshallow
-        pip install -e .
         help2man -N multigifview > man/multigifview.1
         python setup.py sdist bdist_wheel
         twine upload dist/*
