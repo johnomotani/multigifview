@@ -31,15 +31,15 @@ def show_gifs(*args, max_columns=2):
 
 
 def main():
-    """Simple gif viewer
+    """Simple gif viewer.
 
     Commands:
-    play - space
-    previous frame - p or left-arrow
-    next frame - n or right-arrow
-    beginning - b or up arrow
-    end - e or down arrow
-    quit - q, Ctrl-q, Ctrl-w or Ctrl-x
+    play - space;
+    previous frame - p or left-arrow;
+    next frame - n or right-arrow;
+    beginning - b or up arrow;
+    end - e or down arrow;
+    quit - q, Ctrl-q, Ctrl-w or Ctrl-x.
     """
     # Make sure application exits on Ctrl-C
     import signal
