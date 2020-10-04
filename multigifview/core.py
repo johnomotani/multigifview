@@ -85,19 +85,21 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             self.extra_gif_widgets.append(gif_widget)
 
         # Set a sensible initial width
-        scrollable_width = (
-            sum([c.sizeHint().width() for c in self.columns])
-            + self.columns[0].spacing()
-            + sum([2 * c.spacing() for c in self.columns[1:-1]])
-            + self.columns[-1].spacing()
-            + self.scrollArea.verticalScrollBar().sizeHint().width()
-        )
         (
             left_margin,
             top_margin,
             right_margin,
             bottom_margin,
         ) = self.verticalLayout_main.getContentsMargins()
+        scrollable_width = (
+            left_margin
+            + sum([c.sizeHint().width() for c in self.columns])
+            + self.columns[0].spacing()
+            + sum([2 * c.spacing() for c in self.columns[1:-1]])
+            + self.columns[-1].spacing()
+            + self.scrollArea.verticalScrollBar().sizeHint().width()
+            + right_margin
+        )
         max_width = (
             QApplication.desktop().availableGeometry().width()
             - left_margin
@@ -109,9 +111,11 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         column_heights = [c.sizeHint().height() for c in self.columns]
         highest_col_index = column_heights.index(max(column_heights))
         scrollable_height = (
-            column_heights[highest_col_index]
+            top_margin
+            + column_heights[highest_col_index]
             + self.columns[highest_col_index].spacing()
             + self.scrollArea.horizontalScrollBar().sizeHint().height()
+            + bottom_margin
         )
         control_bar_height = (
             self.horizontalLayout.sizeHint().height()
