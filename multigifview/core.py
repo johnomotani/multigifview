@@ -12,6 +12,7 @@ from Qt.QtWidgets import (
     QVBoxLayout,
 )
 from Qt.QtGui import QMovie, QKeySequence
+from Qt.QtCore import QSize
 
 
 class MultiGifView(QMainWindow, Ui_MainWindow):
@@ -49,7 +50,16 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         set_clicked(self.next_button, self.next_action)
         set_clicked(self.beginning_button, self.beginning_action)
         set_clicked(self.end_button, self.end_action)
+
         set_clicked(self.quit_button, self.quit_action)
+
+        set_clicked(self.zoom_out_button, self.zoom_out_action)
+        set_clicked(self.zoom_in_button, self.zoom_in_action)
+        set_clicked(self.zoom_reset_button, self.zoom_reset_action)
+        self.zoom_box.editingFinished.connect(self.zoom_changed_action)
+        self.zoom_box.setToolTip(self.zoom_changed_action.__doc__.strip())
+
+        self.zoom = 100.0
 
         if max_columns < 1:
             raise ValueError(f"Number of columns must be positive, got {max_columns}")
@@ -76,6 +86,8 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             movie.setCacheMode(QMovie.CacheAll)
             gif_widget.setMovie(movie)
             movie.jumpToFrame(0)
+            movie.unscaled_width = movie.currentImage().width()
+            movie.unscaled_height = movie.currentImage().height()
 
             column = self.columns[i % n_columns]
             position = column.count() - 1
@@ -85,19 +97,21 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             self.extra_gif_widgets.append(gif_widget)
 
         # Set a sensible initial width
-        scrollable_width = (
-            sum([c.sizeHint().width() for c in self.columns])
-            + self.columns[0].spacing()
-            + sum([2 * c.spacing() for c in self.columns[1:-1]])
-            + self.columns[-1].spacing()
-            + self.scrollArea.verticalScrollBar().sizeHint().width()
-        )
         (
             left_margin,
             top_margin,
             right_margin,
             bottom_margin,
         ) = self.verticalLayout_main.getContentsMargins()
+        scrollable_width = (
+            left_margin
+            + sum([c.sizeHint().width() for c in self.columns])
+            + self.columns[0].spacing()
+            + sum([2 * c.spacing() for c in self.columns[1:-1]])
+            + self.columns[-1].spacing()
+            + self.scrollArea.verticalScrollBar().sizeHint().width()
+            + right_margin
+        )
         max_width = (
             QApplication.desktop().availableGeometry().width()
             - left_margin
@@ -109,9 +123,11 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         column_heights = [c.sizeHint().height() for c in self.columns]
         highest_col_index = column_heights.index(max(column_heights))
         scrollable_height = (
-            column_heights[highest_col_index]
+            top_margin
+            + column_heights[highest_col_index]
             + self.columns[highest_col_index].spacing()
             + self.scrollArea.horizontalScrollBar().sizeHint().height()
+            + bottom_margin
         )
         control_bar_height = (
             self.horizontalLayout.sizeHint().height()
@@ -195,3 +211,90 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         """Allow window to be shrunk from default size"""
         self.scrollArea.setMinimumWidth(0)
         self.scrollArea.setMinimumHeight(0)
+
+    def set_zoom(self, new_zoom):
+        try:
+            self.zoom = float(new_zoom)
+        except ValueError:
+            # Make the box red
+            self.zoom_box.setStyleSheet("QLineEdit { background-color: #aa0000 }")
+            return
+        self.zoom_box.setStyleSheet("QLineEdit { background-color: #FFFFFF }")
+        self.zoom_box.setText(str(int(round(self.zoom))))
+
+        current_frame = self.movie.currentFrameNumber()
+        scale_factor = self.zoom / 100.0
+
+        self.movie.setScaledSize(
+            QSize(
+                scale_factor * self.movie.unscaled_width,
+                scale_factor * self.movie.unscaled_height,
+            )
+        )
+        for movie in self.extra_movies:
+            movie.setScaledSize(
+                QSize(
+                    scale_factor * movie.unscaled_width,
+                    scale_factor * movie.unscaled_height,
+                )
+            )
+
+        # change frame to make the image re-draw
+        self.movie.jumpToFrame(0 if current_frame > 0 else 1)
+        self.movie.jumpToFrame(current_frame)
+
+    def zoom_changed_action(self):
+        """<html><head/><body><p><b>Set zoom factor</b></p></body></html>"""
+        self.set_zoom(self.zoom_box.text())
+
+    def zoom_out_action(self):
+        """<html><head/><body><p><b>Zoom out</b><br>
+        -</p></body></html>
+        """
+        new_zoom = 0.8 * self.zoom
+        if self.zoom >= 100.0:
+            # Round to nearest 10%
+            new_zoom = round(new_zoom, -1)
+        elif self.zoom > 20.0:
+            # Round to nearest 5%
+            new_zoom = round(2.0 * new_zoom, -1) / 2.0
+        elif self.zoom > 5.0:
+            # Round to nearest 1%
+            new_zoom = round(new_zoom)
+        elif self.zoom > 0.5:
+            # Round to nearest 0.1%
+            new_zoom = round(new_zoom, 1)
+        elif self.zoom > 0.05:
+            # Round to nearest 0.01%
+            new_zoom = round(new_zoom, 2)
+
+        self.set_zoom(new_zoom)
+
+    def zoom_in_action(self):
+        """<html><head/><body><p><b>Zoom in</b><br>
+        +</p></body></html>
+        """
+        new_zoom = 1.25 * self.zoom
+        if self.zoom >= 100.0:
+            # Round to nearest 10%
+            new_zoom = round(new_zoom, -1)
+        elif self.zoom > 20.0:
+            # Round to nearest 5%
+            new_zoom = round(2.0 * new_zoom, -1) / 2.0
+        elif self.zoom > 5.0:
+            # Round to nearest 1%
+            new_zoom = round(new_zoom)
+        elif self.zoom > 0.5:
+            # Round to nearest 0.1%
+            new_zoom = round(new_zoom, 1)
+        elif self.zoom > 0.05:
+            # Round to nearest 0.01%
+            new_zoom = round(new_zoom, 2)
+
+        self.set_zoom(new_zoom)
+
+    def zoom_reset_action(self):
+        """<html><head/><body><p><b>Reset original size</b><br>
+        =</p></body></html>
+        """
+        self.set_zoom(100.0)

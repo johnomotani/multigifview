@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>230</width>
-    <height>140</height>
+    <width>516</width>
+    <height>151</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -37,8 +37,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>210</width>
-         <height>68</height>
+         <width>496</width>
+         <height>73</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="gif_layout">
@@ -139,6 +139,82 @@
        </widget>
       </item>
       <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="zoom_out_button">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="zoom-out">
+          <normaloff>.</normaloff>.</iconset>
+        </property>
+        <property name="shortcut">
+         <string>-</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="zoom_box">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>33</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>33</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>100</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="zoom_in_button">
+        <property name="toolTip">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="zoom-in">
+          <normaloff>.</normaloff>.</iconset>
+        </property>
+        <property name="shortcut">
+         <string>+</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="zoom_reset_button">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="zoom-original"/>
+        </property>
+        <property name="shortcut">
+         <string>=</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -157,7 +233,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="window-close"/>
+         <iconset theme="window-close">
+          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
@@ -170,8 +247,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>230</width>
-     <height>20</height>
+     <width>516</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>

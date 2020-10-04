@@ -41,7 +41,14 @@ Once the window is opened:
 
 * beginning - b, up arrow, or skip-backward button in bottom left
 
-* quit - q, Ctrl-q, Ctrl-w, Ctrl-x or close the window
+* zoom out - - or zoom-out button at bottom
+
+* zoom in - + or zoom-in button at bottom
+
+* zoom to scale factor - enter number (in %) into box in bottom panel and press
+  enter
+
+* quit - q, Ctrl-q, Ctrl-w, Ctrl-x, button in bottom right or close the window
 
 Command line argumens:
 
