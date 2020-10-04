@@ -48,7 +48,7 @@ Once the window is opened:
 * zoom to scale factor - enter number (in %) into box in bottom panel and press
   enter
 
-* quit - q, Ctrl-q, Ctrl-w, Ctrl-x or close the window
+* quit - q, Ctrl-q, Ctrl-w, Ctrl-x, button in bottom right or close the window
 
 Command line argumens:
 
