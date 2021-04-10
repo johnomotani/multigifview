@@ -8,7 +8,7 @@ import sys
 from .core import MultiGifView
 
 
-def show_gifs(*filenames, max_columns=2):
+def show_gifs(*filenames, max_columns=2, titles=True):
     """Show gifs in a Qt window
 
     Any number of gifs can be opened. Each will be in a new column until there are
@@ -23,7 +23,7 @@ def show_gifs(*filenames, max_columns=2):
         Maximum number of columns to use
     """
     app = QApplication(sys.argv)
-    window = MultiGifView(filenames, max_columns=max_columns)
+    window = MultiGifView(filenames, max_columns=max_columns, titles=titles)
     window.show()
     window.reset_minimum_size()
 
@@ -56,6 +56,13 @@ def main():
         type=int,
         default=2,
     )
+    parser.add_argument(
+        "-n",
+        "--no-titles",
+        action="store_true",
+        default=False,
+        help="Disable titles above gifs",
+    )
     from multigifview import __version__
 
     parser.add_argument(
@@ -63,7 +70,9 @@ def main():
     )
     args = parser.parse_args()
 
-    exit_code = show_gifs(*args.file, max_columns=args.max_columns)
+    exit_code = show_gifs(
+        *args.file, max_columns=args.max_columns, titles=not args.no_titles
+    )
 
     sys.exit(exit_code)
 

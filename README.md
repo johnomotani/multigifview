@@ -56,6 +56,8 @@ Command line argumens:
 
 ``-h, --help`` : print help text
 
+``-n, --no-titles``: turn off titles over each gif
+
 ``-v, --version`` : print the version number
 
 ### In Python code
@@ -66,7 +68,8 @@ MultiGifView can be used from within Python code.
     >>> show_gifs("gif1.gif", "gif2.gif")
 
 Any number of gifs can be passed as positional arguments. ``max_columns`` can
-be passed as a keyword argument.
+be passed as a keyword argument. An argument ``titles=False`` can be passed to
+turn off titles above gifs.
 
 Contributing
 ------------
