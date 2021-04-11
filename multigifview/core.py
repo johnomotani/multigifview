@@ -13,12 +13,13 @@ from Qt.QtWidgets import (
 )
 from Qt.QtGui import QMovie, QKeySequence
 from Qt.QtCore import QSize
+from Qt.QtCore import Qt as QtCoreQt
 
 
 class MultiGifView(QMainWindow, Ui_MainWindow):
     """A program for viewing .gif files"""
 
-    def __init__(self, filenames, *, max_columns):
+    def __init__(self, filenames, *, max_columns, titles):
         super().__init__(None)
         self.setupUi(self)
 
@@ -79,6 +80,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         for i, arg in enumerate(filenames):
             gif_widget = QLabel(self.centralwidget)
             gif_widget.setText("")
+            gif_widget.setToolTip(arg)
             gif_widget.setObjectName(f"gif_widget{i + 1}")
 
             filepath = Path(arg)
@@ -91,6 +93,16 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
 
             column = self.columns[i % n_columns]
             position = column.count() - 1
+
+            if titles:
+                title_widget = QLabel(self.centralwidget)
+                title_widget.setText(arg)
+                title_widget.setAlignment(QtCoreQt.AlignCenter)
+                title_widget.setObjectName(f"title_widget{i + 1}")
+
+                column.insertWidget(position, title_widget)
+                position = position + 1
+
             column.insertWidget(position, gif_widget)
 
             self.extra_movies.append(movie)
