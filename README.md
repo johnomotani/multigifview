@@ -53,7 +53,9 @@ Once the window is opened:
 Command line argumens:
 
 ``-c, --max-columns <i>`` : use at most ``<i>`` columns for display
+
 ``-h, --help`` : print help text
+
 ``-v, --version`` : print the version number
 
 ### In Python code
