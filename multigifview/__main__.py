@@ -8,7 +8,7 @@ import sys
 from .core import MultiGifView
 
 
-def show_gifs(*filenames, max_columns=2, titles=True):
+def show_gifs(*filenames, max_columns=2, titles=True, zoom=None):
     """Show gifs in a Qt window
 
     Any number of gifs can be opened. Each will be in a new column until there are
@@ -21,9 +21,13 @@ def show_gifs(*filenames, max_columns=2, titles=True):
         The .gif files to open
     max_columns : int, default 2
         Maximum number of columns to use
+    zoom : float, optional
+        Set the initial zoom level of the gifs (in %)
     """
     app = QApplication(sys.argv)
-    window = MultiGifView(filenames, max_columns=max_columns, titles=titles)
+    window = MultiGifView(
+        filenames, max_columns=max_columns, titles=titles, initial_zoom=zoom
+    )
     window.show()
     window.reset_minimum_size()
 
@@ -39,6 +43,8 @@ def main():
     next frame - n or right-arrow;
     beginning - b or up arrow;
     end - e or down arrow;
+    zoom in - +
+    zoom out - -
     quit - q, Ctrl-q, Ctrl-w or Ctrl-x.
     """
     # Make sure application exits on Ctrl-C
@@ -52,9 +58,9 @@ def main():
     parser.add_argument(
         "-c",
         "--max-columns",
-        help="maximum number of columns to use (default 2)",
         type=int,
         default=2,
+        help="maximum number of columns to use (default 2)",
     )
     parser.add_argument(
         "-n",
@@ -68,10 +74,20 @@ def main():
     parser.add_argument(
         "-v", "--version", action="version", version="%(prog)s {}".format(__version__)
     )
+    parser.add_argument(
+        "-z",
+        "--zoom",
+        type=float,
+        default=None,
+        help="Initial zoom setting in percent",
+    )
     args = parser.parse_args()
 
     exit_code = show_gifs(
-        *args.file, max_columns=args.max_columns, titles=not args.no_titles
+        *args.file,
+        max_columns=args.max_columns,
+        titles=not args.no_titles,
+        zoom=args.zoom
     )
 
     sys.exit(exit_code)

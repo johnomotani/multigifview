@@ -19,7 +19,7 @@ from Qt.QtCore import Qt as QtCoreQt
 class MultiGifView(QMainWindow, Ui_MainWindow):
     """A program for viewing .gif files"""
 
-    def __init__(self, filenames, *, max_columns, titles):
+    def __init__(self, filenames, *, max_columns, titles, initial_zoom=None):
         super().__init__(None)
         self.setupUi(self)
 
@@ -108,6 +108,19 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             self.extra_movies.append(movie)
             self.extra_gif_widgets.append(gif_widget)
 
+        # want the longest-running gif to be the one that's directly controlled, so that
+        # it can play all the way to the end, not have to stop when the first movie
+        # reaches its last frame
+        frame_counts = [m.frameCount() for m in self.extra_movies]
+        ind_longest = frame_counts.index(max(frame_counts))
+        self.movie = self.extra_movies.pop(ind_longest)
+
+        # Create actions so extra movies follow self.movie
+        self.movie.frameChanged.connect(self.change_frames)
+
+        if initial_zoom is not None:
+            self.set_zoom(initial_zoom)
+
         # Set a sensible initial width
         (
             left_margin,
@@ -156,16 +169,6 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             - title_bar_height
         )
         self.scrollArea.setMinimumHeight(min(scrollable_height, max_height))
-
-        # want the longest-running gif to be the one that's directly controlled, so that
-        # it can play all the way to the end, not have to stop when the first movie
-        # reaches its last frame
-        frame_counts = [m.frameCount() for m in self.extra_movies]
-        ind_longest = frame_counts.index(max(frame_counts))
-        self.movie = self.extra_movies.pop(ind_longest)
-
-        # Create actions so extra movies follow self.movie
-        self.movie.frameChanged.connect(self.change_frames)
 
     def play_action(self):
         """<html><head/><body><p><b>Play</b><br>
