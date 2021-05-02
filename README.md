@@ -60,6 +60,8 @@ Command line argumens:
 
 ``-v, --version`` : print the version number
 
+``-z, --zoom`` : set the initial zoom level in %
+
 ### In Python code
 
 MultiGifView can be used from within Python code.
