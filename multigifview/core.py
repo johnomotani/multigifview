@@ -112,8 +112,12 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         # it can play all the way to the end, not have to stop when the first movie
         # reaches its last frame
         frame_counts = [m.frameCount() for m in self.extra_movies]
-        ind_longest = frame_counts.index(max(frame_counts))
+        self.total_frames = max(frame_counts)
+        ind_longest = frame_counts.index(self.total_frames)
         self.movie = self.extra_movies.pop(ind_longest)
+
+        # Set initial text for frame counter
+        self.frameCounter.setText(f"0 / {self.total_frames}")
 
         # Create actions so extra movies follow self.movie
         self.movie.frameChanged.connect(self.change_frames)
@@ -215,6 +219,9 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
 
     def change_frames(self, new_frame):
         """Change all the frames in step"""
+        # Update text in frame counter
+        self.frameCounter.setText(f"{new_frame} / {self.total_frames}")
+
         for movie in self.extra_movies:
             length = movie.frameCount()
             if new_frame < length:
