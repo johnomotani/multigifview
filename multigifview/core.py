@@ -249,15 +249,15 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
 
         self.movie.setScaledSize(
             QSize(
-                scale_factor * self.movie.unscaled_width,
-                scale_factor * self.movie.unscaled_height,
+                round(scale_factor * self.movie.unscaled_width),
+                round(scale_factor * self.movie.unscaled_height),
             )
         )
         for movie in self.extra_movies:
             movie.setScaledSize(
                 QSize(
-                    scale_factor * movie.unscaled_width,
-                    scale_factor * movie.unscaled_height,
+                    round(scale_factor * movie.unscaled_width),
+                    round(scale_factor * movie.unscaled_height),
                 )
             )
 
