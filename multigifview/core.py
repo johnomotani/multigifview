@@ -19,7 +19,7 @@ from Qt.QtCore import Qt as QtCoreQt
 class MultiGifView(QMainWindow, Ui_MainWindow):
     """A program for viewing .gif files"""
 
-    def __init__(self, filenames, *, max_columns, titles, initial_zoom=None):
+    def __init__(self, filenames, *, max_columns, titles, step, initial_zoom=None):
         super().__init__(None)
         self.setupUi(self)
 
@@ -61,6 +61,15 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         self.zoom_box.setToolTip(self.zoom_changed_action.__doc__.strip())
 
         self.zoom = 100.0
+
+        # self.step sets the number of frames to change by when moving to the next
+        # frame. Defaults to 1.
+        if step < 1:
+            raise ValueError(
+                "The step passed to `-s`/`--step` must be a positive integer. Got "
+                f"{step}."
+            )
+        self.step = step
 
         if max_columns < 1:
             raise ValueError(f"Number of columns must be positive, got {max_columns}")
@@ -112,12 +121,14 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         # it can play all the way to the end, not have to stop when the first movie
         # reaches its last frame
         frame_counts = [m.frameCount() for m in self.extra_movies]
-        self.total_frames = max(frame_counts)
-        ind_longest = frame_counts.index(self.total_frames)
+        # Ensure total_frames is a multiple of self.step so that when we loop between
+        # beginning/end we get the same set of frames
+        self.total_frames = max(frame_counts) - max(frame_counts) % self.step
+        ind_longest = frame_counts.index(max(frame_counts))
         self.movie = self.extra_movies.pop(ind_longest)
 
         # Set initial text for frame counter
-        self.frameCounter.setText(f"0 / {self.total_frames}")
+        self.frameCounter.setText(f"0 / {self.total_frames // self.step}")
 
         # Create actions so extra movies follow self.movie
         self.movie.frameChanged.connect(self.change_frames)
@@ -190,14 +201,16 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         p, left</p></body></html>
         """
         self.movie.jumpToFrame(
-            (self.movie.currentFrameNumber() - 1) % self.movie.frameCount()
+            (self.movie.currentFrameNumber() - self.step) % self.total_frames
         )
 
     def next_action(self):
         """<html><head/><body><p><b>Forward one frame</b><br>
         n, right</p></body></html>
         """
-        self.movie.jumpToNextFrame()
+        self.movie.jumpToFrame(
+            (self.movie.currentFrameNumber() + self.step) % self.total_frames
+        )
 
     def beginning_action(self):
         """<html><head/><body><p><b>Back to beginning</b><br>
@@ -209,7 +222,7 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
         """<html><head/><body><p><b>Forward to end</b><br>
         e, down</p></body></html>
         """
-        self.movie.jumpToFrame(self.movie.frameCount() - 1)
+        self.movie.jumpToFrame(self.total_frames - 1)
 
     def quit_action(self):
         """<html><head/><body><p><b>Quit</b><br>
@@ -220,7 +233,9 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
     def change_frames(self, new_frame):
         """Change all the frames in step"""
         # Update text in frame counter
-        self.frameCounter.setText(f"{new_frame} / {self.total_frames}")
+        self.frameCounter.setText(
+            f"{new_frame // self.step} / {self.total_frames // self.step}"
+        )
 
         for movie in self.extra_movies:
             length = movie.frameCount()
@@ -249,15 +264,15 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
 
         self.movie.setScaledSize(
             QSize(
-                scale_factor * self.movie.unscaled_width,
-                scale_factor * self.movie.unscaled_height,
+                round(scale_factor * self.movie.unscaled_width),
+                round(scale_factor * self.movie.unscaled_height),
             )
         )
         for movie in self.extra_movies:
             movie.setScaledSize(
                 QSize(
-                    scale_factor * movie.unscaled_width,
-                    scale_factor * movie.unscaled_height,
+                    round(scale_factor * movie.unscaled_width),
+                    round(scale_factor * movie.unscaled_height),
                 )
             )
 
