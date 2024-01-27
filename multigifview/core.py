@@ -75,6 +75,16 @@ class MultiGifView(QMainWindow, Ui_MainWindow):
             raise ValueError(f"Number of columns must be positive, got {max_columns}")
         n_columns = min(max_columns, len(filenames))
         self.columns = [self.column0]
+
+        if n_columns == 1:
+            # Add an extra column to stop single-column layout messing up. Not sure why
+            # exactly this is needed, or why it works.
+            column = QVBoxLayout()
+            column.setObjectName(f"columnX")
+            spacerItem = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+            column.addItem(spacerItem)
+            self.gif_layout.addLayout(column)
+
         for i in range(n_columns)[1:]:
             # Create column
             column = QVBoxLayout()
